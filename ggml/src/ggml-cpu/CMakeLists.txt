@@ -399,7 +399,7 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
             elseif (${CMAKE_SYSTEM_PROCESSOR} MATCHES "ppc64le")
                 list(APPEND ARCH_FLAGS -mcpu=powerpc64le -mtune=native)
             else()
-                list(APPEND ARCH_FLAGS -mcpu=native -mtune=native -mpowerpc64)
+                list(APPEND ARCH_FLAGS -mcpu=native -mtune=native)
             endif()
         elseif(GGML_CPU_ALL_VARIANTS)
             # Begin with the lowest baseline

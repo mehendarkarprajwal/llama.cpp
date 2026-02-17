@@ -1842,8 +1842,8 @@ class tinyBLAS_HP16_PPC {
             t[1] = vec_perm(c[2], c[3], swiz1);
             s[0] = vec_perm(t[0], t[1], swiz3);
             s[1] = vec_perm(t[0], t[1], swiz4);
-            vec_xst(s[0], 0, (vec_t*)vecOffset);
-            vec_xst(s[1], 0, (vec_t*)(vecOffset + 16));
+            vec_xst(s[0], 0, vecOffset);
+            vec_xst(s[1], 0, (vecOffset + 16));
         } else if (numVec == 4) {
             t[0] = vec_perm(c[0], c[1], swiz1);
             t[1] = vec_perm(c[0], c[1], swiz2);
@@ -1854,7 +1854,7 @@ class tinyBLAS_HP16_PPC {
             s[2] = vec_perm(t[1], t[3], swiz3);
             s[3] = vec_perm(t[1], t[3], swiz4);
             for (int i = 0; i < 4; ++i)
-                vec_xst(s[i], 0, (vec_t*)(vecOffset + i * 16));
+                vec_xst(s[i], 0, (vecOffset + i * 16));
         } else if (numVec == 8) {
             for (int i = 0; i < 4; i += 2) {
                 t[i+0] = vec_perm(c[i+0], c[i+1], swiz1);
@@ -1873,7 +1873,7 @@ class tinyBLAS_HP16_PPC {
             s[6] = vec_perm(t[5], t[7], swiz3);
             s[7] = vec_perm(t[5], t[7], swiz4);
             for (int i = 0; i < 8; ++i)
-                vec_xst(s[i], 0, (vec_t*)(vecOffset + i * 16));
+                vec_xst(s[i], 0, (vecOffset + i * 16));
         }
     }
 
@@ -1894,7 +1894,7 @@ class tinyBLAS_HP16_PPC {
                         aoffsets[it] = aoffsets[it-1] + lda;
                     aoffset += 4 * lda;
                     for (int i = 0; i < 4; ++i)
-                        c_arr[i] = vec_xl(0, (vector unsigned char*)aoffsets[i]);
+                        c_arr[i] = vec_xl(0, (const unsigned char*)aoffsets[i]);
                     vector_permute_store(c_arr, 4, vecOffset);
                     for (int i = 0; i<4; i++)
                         aoffsets[i] = aoffsets[i]+lda;
@@ -1909,7 +1909,7 @@ class tinyBLAS_HP16_PPC {
                     aoffset += 8 * lda;
                     do {
                         for (int it = 0; it < 8; ++it)
-                            c_arr[it] = vec_xl(0, (vector unsigned char*)aoffsets[it]);
+                            c_arr[it] = vec_xl(0, (const unsigned char*)aoffsets[it]);
                         vector_permute_store(c_arr, 8, vecOffset);
                         for (int it = 0; it < 8; ++it)
                             aoffsets[it] = aoffsets[it] + 8*lda;
@@ -1927,7 +1927,7 @@ class tinyBLAS_HP16_PPC {
             aoffset += 4 * lda;
             if (cols == 4) {
                 for (int it = 0; it < 4; ++it)
-                    c_arr[it] = vec_xl(0, (vector unsigned char*)aoffsets[it]);
+                    c_arr[it] = vec_xl(0, (const unsigned char*)aoffsets[it]);
                 vector_permute_store(c_arr, 2, vecOffset);
                 for (int it = 0; it< 4; it++)
                     aoffsets[it] = aoffsets[it] + lda;
@@ -1937,7 +1937,7 @@ class tinyBLAS_HP16_PPC {
             if (i > 0) {
                 do {
                     for (int it = 0; it < 4; ++it)
-                        c_arr[it] = vec_xl(0, (vector unsigned char*)aoffsets[it]);
+                        c_arr[it] = vec_xl(0, (const unsigned char*)aoffsets[it]);
                     vector_permute_store(c_arr, 4, vecOffset);
                     for (int it = 0; it< 4; it++)
                         aoffsets[it] = aoffsets[it] + 8*lda;
@@ -1952,9 +1952,9 @@ class tinyBLAS_HP16_PPC {
                 aoffsets[it] = aoffsets[it-1] + lda;
             if (cols == 4) {
                 switch(rows) {
-                    case 3: c_arr[2] = vec_xl(0, (vector unsigned char*)aoffsets[2]);
-                    case 2: c_arr[1] = vec_xl(0, (vector unsigned char*)aoffsets[1]);
-                    case 1: c_arr[0] = vec_xl(0, (vector unsigned char*)aoffsets[0]);
+                    case 3: c_arr[2] = vec_xl(0, (const unsigned char*)aoffsets[2]);
+                    case 2: c_arr[1] = vec_xl(0, (const unsigned char*)aoffsets[1]);
+                    case 1: c_arr[0] = vec_xl(0, (const unsigned char*)aoffsets[0]);
                         break;
                 }
                 vector_permute_store(c_arr, 2, vecOffset);
@@ -1966,9 +1966,9 @@ class tinyBLAS_HP16_PPC {
             if (i > 0) {
                 do {
                     switch(rows) {
-                        case 3: c_arr[2] = vec_xl(0, (vector unsigned char*)aoffsets[2]);
-                        case 2: c_arr[1] = vec_xl(0, (vector unsigned char*)aoffsets[1]);
-                        case 1: c_arr[0] = vec_xl(0, (vector unsigned char*)aoffsets[0]);
+                        case 3: c_arr[2] = vec_xl(0, (const unsigned char*)aoffsets[2]);
+                        case 2: c_arr[1] = vec_xl(0, (const unsigned char*)aoffsets[1]);
+                        case 1: c_arr[0] = vec_xl(0, (const unsigned char*)aoffsets[0]);
                             break;
                     }
                     vector_permute_store(c_arr, 4, vecOffset);
@@ -2474,7 +2474,7 @@ class tinyBLAS_HP16_PPC {
                 if (i > 0) {
                 do {
                     for (int it = 0; it < 8; it++) {
-                        arr[it] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[it]->qs);
+                        arr[it] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[it]->qs);
                         __builtin_vsx_disassemble_pair(c[it], &arr[it]);
                         c1[it] = c[it][0];
                         c2[it] = c[it][1];
@@ -2501,7 +2501,7 @@ class tinyBLAS_HP16_PPC {
             if (i > 0) {
                do {
                     for (int it = 0; it < 4; it++) {
-                        arr[it] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[it]->qs);
+                        arr[it] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[it]->qs);
                         __builtin_vsx_disassemble_pair(c[it], &arr[it]);
                         c1[it] = c[it][0];
                         c2[it] = c[it][1];
@@ -2525,13 +2525,13 @@ class tinyBLAS_HP16_PPC {
             if (i > 0) {
                 do {
                     switch(rows) {
-                        case 3: arr[2] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[2]->qs);
+                        case 3: arr[2] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[2]->qs);
                                 __builtin_vsx_disassemble_pair(c[2], &arr[2]);
                                 c1[2] = c[2][0]; c2[2] = c[2][1];
-                        case 2: arr[1] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[1]->qs);
+                        case 2: arr[1] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[1]->qs);
                                 __builtin_vsx_disassemble_pair(c[1], &arr[1]);
                                 c1[1] = c[1][0]; c2[1] = c[1][1];
-                        case 1: arr[0] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[0]->qs);
+                        case 1: arr[0] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[0]->qs);
                                 __builtin_vsx_disassemble_pair(c[0], &arr[0]);
                                 c1[0] = c[0][0]; c2[0] = c[0][1];
                                 break;
@@ -2935,7 +2935,7 @@ class tinyBLAS_PPC {
                 if (i > 0) {
                     do {
                         for (int it = 0; it < 8; it++) {
-                            arr[it] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[it]);
+                            arr[it] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[it]);
                             __builtin_vsx_disassemble_pair(c[it], &arr[it]);
                             c1[it] = c[it][0];
                             c2[it] = c[it][1];
@@ -2970,7 +2970,7 @@ class tinyBLAS_PPC {
             if (i > 0) {
                 do {
                     for (int it = 0; it < 4; it++) {
-                        arr[it] = __builtin_vsx_lxvp(0, (__vector_pair*)aoffsets[it]);
+                        arr[it] = __builtin_vsx_lxvp(0L, (__vector_pair*)aoffsets[it]);
                         __builtin_vsx_disassemble_pair(c[it], &arr[it]);
                         c1[it] = c[it][0];
                         c2[it] = c[it][1];
